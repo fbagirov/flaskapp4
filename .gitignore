@@ -1,0 +1,8 @@
+*.pyc
+secrets.py
+flask
+.#*
+.DS_Store
+app.db*
+*~
+.git_old
