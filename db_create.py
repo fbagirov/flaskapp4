@@ -7,3 +7,5 @@ import config
 from app2 import db
 # import os.path
 db.create_all()
+# user_datastore.create_user(email='matt@nobien.net', password='password')
+# db.session.commit()
