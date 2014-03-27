@@ -1,59 +1,36 @@
-{% extends "layout.html" %}
+{% from '_macros.html' import render_field %}
 
-test in templates/login.html
-<p>
+<!--removed boilerplate.html from this code https://github.com/mattupstate/flask-social-example/blob/master/app/templates/login.html-->
 
-{% block content %}
-{% macro show_provider_button(provider_id, display_name, conn) %}
-    {% if conn %}
-    <form action="{{ url_for('social.remove_connection', provider_id=conn.provider_id, provider_user_id=conn.provider_user_id) }}" method="DELETE">
-      <input type="submit" value="Disconnect {{ display_name }}" />
-    </form>
-    {% else %}
-    <form action="{{ url_for('social.connect', provider_id=provider_id) }}" method="POST">
-      <input type="submit" value="Connect {{ display_name }}" />
-    </form>
-    {% endif %}
+{% block body_class %}main main-login{% endblock %}
+
+{% macro social_login(provider_id, display_name) %}
+  <form action="{{ url_for('social.login', provider_id=provider_id) }}" method="POST">
+    <button type="submit" class="btn btn-primary btn-large">Login with {{ display_name }}</button>
+  </form>
 {% endmacro %}
 
-{{ show_provider_button('twitter', 'Twitter', twitter_conn) }}
-
-{{ show_provider_button('facebook', 'Facebook', facebook_conn) }}
-
-{{ show_provider_button('foursquare', 'foursquare', foursquare_conn) }}
-
-
-
-<!--OLD LOGIN PAGE-->
-<!--<script type="text/javascript">
-function set_openid(openid, pr)
-{
-    u = openid.search('<username>')
-    if (u != -1) {
-        // openid requires username
-        user = prompt('Enter your ' + pr + ' username:')
-        openid = openid.substr(0, u) + user
-    }
-    form = document.forms['login'];
-    form.elements['openid'].value = openid
-}
-</script>
-
-
-<h1>Sign In</h1>
-<form action="" method="post" name="login">
-    {{form.hidden_tag()}}
-    <p>
-        Please enter your OpenID:<br>
-        {{form.openid(size=80)}}<br>
-	 {% for error in form.errors.openid %}
-        <span style="color: red;">[{{error}}]</span>
-        {% endfor %}<br>
-	|{% for pr in providers %}
-	<a href="javascript:set_openid('{{pr.url}}', '{{pr.name}}');">{{pr.name}}</a>  |
-	{% endfor %}
-    </p>
-    <p>{{form.remember_me}} Remember Me</p>
-    <p><input type="submit" value="Sign In"></p>
-</form>-->
+{% block layout %}
+<div class="page-header">
+  <h1>Log In</h1>
+</div>
+<div class="row content">
+  <div class="span4 offset1">
+    <form class="well" action="{{ url_for('security.login') }}" method="POST">
+      {{ form.hidden_tag() }}
+      {{ render_field(form.email) }}
+      {{ render_field(form.password) }}
+      <label class="checkbox">{{ form.remember()|safe }} Remember me</label>
+      <button type="submit" class="btn btn-primary btn-large">Login</button>
+    </form>
+  </div>
+  <div class="span2 col2">
+    <h3>OR</h3>
+  </div>
+  <div class="span4 col3">
+    {{ social_login('twitter', 'Twitter' )}}
+    {{ social_login('facebook', 'Facebook' )}}
+    <!-- {{ social_login('github', 'GitHub' )}} -->
+  </div>
+</div>
 {% endblock %}

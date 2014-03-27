@@ -1,12 +1,14 @@
-from flask import render_template, flash, redirect
+from flask import render_template, flash, redirect, request, current_app, session, url_for
+from flask.ext.security import LoginForm, current_user, login_required, \
+    login_user
 from app2 import app 
-from forms import LoginForm
 from flask import Flask, render_template
 from flask.ext.social import Social
 from flask.ext.social.datastore import SQLAlchemyConnectionDatastore
 from sys import stderr
 
-from models import social
+print >>stderr, "Importing views"
+
 
 @app.route('/')
 @app.route('/index')
@@ -23,13 +25,29 @@ def about():
 
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
-     print >> stderr, "Hello stderr"
-     twitter_conn = social.twitter.get_connection()
-     assert twitter_conn, "no twitter_conn"
-     facebook_conn = social.facebook.get_connection()
-     assert facebook_conn, "no facebook_conn"
+     print >> stderr, "Hello views.py login stderr"
+     print >> stderr, "url_for('social.login', provider_id='twitter') =", url_for('social.login', provider_id='twitter')
+     # twitter_conn = current_app.social.twitter.get_connection()
+     # assert twitter_conn, "no twitter_conn"
+     twitter_conn = None
+     # facebook_conn = current_app.social.facebook.get_connection()
+     # assert facebook_conn, "no facebook_conn"
+     facebook_conn = None
      return render_template(
 	'login.html',
+	content='Login Page',
+	form=LoginForm(),
+        twitter_conn=twitter_conn, facebook_conn=facebook_conn)
+
+@app.route('/soc_login', methods = ['GET', 'POST'])
+def soc_login():
+     print >> stderr, "Hello this is soc_login view, stderr"
+     twitter_conn = current_app.social.twitter.get_connection()
+     assert twitter_conn, "no twitter_conn"
+     facebook_conn = current_app.social.facebook.get_connection()
+     assert facebook_conn, "no facebook_conn"
+     return render_template(
+	'soc_login.html',
 	content='Login Page',
         twitter_conn=twitter_conn, facebook_conn=facebook_conn)
 
