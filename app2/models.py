@@ -3,6 +3,14 @@ from flask import Flask
 from flask.ext.security import Security
 from flask.ext.security import UserMixin, RoleMixin, login_required
 
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+
+from sqlalchemy.orm import relationship, backref
+
+from sqlalchemy import Column, Integer, String
+from app2.database import Base
+
 
 from . import db
 
@@ -17,8 +25,8 @@ print >>stderr, "importing models"
 
 # Define models
 roles_users = db.Table('roles_users',
-        db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
-        db.Column('role_id', db.Integer(), db.ForeignKey('role.id')))
+        db.Column('user_id', db.Integer(), db.ForeignKey('users.id')),
+        db.Column('role_id', db.Integer(), db.ForeignKey('roles.id')))
 
 
 class Role(db.Model, RoleMixin):
@@ -50,13 +58,13 @@ class User(db.Model, UserMixin):
     first_name = db.Column(db.String(50))
     middle_initial = db.Column(db.String(1))
     last_name = db.Column(db.String(50))
-    user_type = db.Column(db.Enum(["student", "alumni"], name="usertype"))
+    user_type = db.Column(db.Enum("student", "alumni", name="usertype"))
 
 class StudentPreferences(db.Model):
 
     __tablename__ = "student_preferences"
 
-    db.Column('user_id', db.Integer(), db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer(), primary_key=True)
     industry_connections = db.Column(db.Boolean())
     leaders_in_your_field = db.Column(db.Boolean())
     potential_employers = db.Column(db.Boolean())
@@ -70,7 +78,7 @@ class AlumniPreferences(db.Model):
 
     __tablename__ = "alumni_preferences"
 
-    db.Column('user_id', db.Integer(), db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer(), primary_key=True)
     connections_w_students = db.Column(db.Boolean())
     connecting_w_alumni = db.Column(db.Boolean())
     connecting_w_career_services = db.Column(db.Boolean())
@@ -91,7 +99,7 @@ class Connection(db.Model):
     __tablename__ = "connections"
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     provider_id = db.Column(db.String(255))
     provider_user_id = db.Column(db.String(255))
     access_token = db.Column(db.String(255))
@@ -107,8 +115,13 @@ class Connection(db.Model):
 ROLE_USER = 0
 ROLE_ADMIN = 1
 
-    def __repr__(self):
-        return '<User %r>' % (self.nickname)
+def __init__(self, name=None, email=None):
+    self.name = name
+    self.email = email
+
+
+def __repr__(self):
+    return '<User %r>' % (self.nickname)
 
 
 
