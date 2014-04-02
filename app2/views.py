@@ -1,14 +1,13 @@
-from flask import render_template, flash, redirect, request, current_app, session, url_for
-from flask.ext.security import LoginForm, current_user, login_required, \
-    login_user
-from app2 import app 
+from sys import stderr
+from flask import render_template, flash, redirect, request, current_app
+from flask import session, url_for
+from flask.ext.security import LoginForm, current_user, login_required
+from flask.ext.security import login_user
 from flask import Flask, render_template
 from flask.ext.social import Social
 from flask.ext.social.datastore import SQLAlchemyConnectionDatastore
-from sys import stderr
 
-print >>stderr, "Importing views"
-
+from . import app 
 
 @app.route('/')
 @app.route('/index')
@@ -25,8 +24,6 @@ def about():
 
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
-     print >> stderr, "Hello views.py login stderr"
-     print >> stderr, "url_for('social.login', provider_id='twitter') =", url_for('social.login', provider_id='twitter')
      # twitter_conn = current_app.social.twitter.get_connection()
      # assert twitter_conn, "no twitter_conn"
      twitter_conn = None
@@ -41,7 +38,6 @@ def login():
 
 @app.route('/soc_login', methods = ['GET', 'POST'])
 def soc_login():
-     print >> stderr, "Hello this is soc_login view, stderr"
      twitter_conn = current_app.social.twitter.get_connection()
      assert twitter_conn, "no twitter_conn"
      facebook_conn = current_app.social.facebook.get_connection()

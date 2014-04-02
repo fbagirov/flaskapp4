@@ -2,7 +2,7 @@
 
 <!--removed boilerplate.html from this code https://github.com/mattupstate/flask-social-example/blob/master/app/templates/login.html-->
 
-{% block body_class %}main main-login{% endblock %}
+{% block body_class %}{% endblock %}
 
 {% macro social_login(provider_id, display_name) %}
   <form action="{{ url_for('social.login', provider_id=provider_id) }}" method="POST">
@@ -18,8 +18,8 @@
   <div class="span4 offset1">
     <form class="well" action="{{ url_for('security.login') }}" method="POST">
       {{ form.hidden_tag() }}
-      {{ render_field(form.email) }}
-      {{ render_field(form.password) }}
+      {{ render_field(form.email) }} <br>
+      {{ render_field(form.password) }} <br>
       <label class="checkbox">{{ form.remember()|safe }} Remember me</label>
       <button type="submit" class="btn btn-primary btn-large">Login</button>
     </form>
