@@ -9,6 +9,8 @@ from flask.ext.social.datastore import SQLAlchemyConnectionDatastore
 
 from . import app 
 
+from forms import *
+
 @app.route('/')
 @app.route('/index')
 def index():
@@ -35,6 +37,30 @@ def login():
 	content='Login Page',
 	form=LoginForm(),
         twitter_conn=twitter_conn, facebook_conn=facebook_conn)
+
+@app.route('/signup', methods = ['GET', 'POST'])
+def signup():
+    # twitter_conn = current_app.social.twitter.get_connection()
+    # assert twitter_conn, "no twitter_conn"
+    twitter_conn = None
+    # facebook_conn = current_app.social.facebook.get_connection()
+    # assert facebook_conn, "no facebook_conn"
+    facebook_conn = None
+    form=SignupForm()
+    if form.validate_on_submit():
+        # WHEN USER SUBMITS SIGNUP INFO.
+        print >>stderr, "/signup got", form.email
+        print >>stderr, "/signup got", form.password
+        return redirect("/index")
+    else:
+        # NEW BLANK SIGNUP PAGE.
+        return render_template(
+            'signup.html',
+            content='Signup Page',
+            twitter_conn=twitter_conn, facebook_conn=facebook_conn,
+            form=form
+            )
+
 
 @app.route('/soc_login', methods = ['GET', 'POST'])
 def soc_login():
