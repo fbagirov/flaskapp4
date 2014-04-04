@@ -1,13 +1,25 @@
 {% from '_macros.html' import render_field %}
 
+<!doctype html>
+<html>
+<head>
+<title>Sign Up With Con-Necta.com!</title>
+
+<script type="text/javascript">
+function show_student() {
+   document.getElementById('prefs_student').style.display = "block";
+   document.getElementById('prefs_alumni').style.display = "none";
+}
+function show_alumni() {
+   document.getElementById('prefs_student').style.display = "none";
+   document.getElementById('prefs_alumni').style.display = "block";
+}
+</script>
+</head>
+<body>
 
 <!--          COPIED FROM LOGIN.HTML         -->
 
-
-
-<!--removed boilerplate.html from this code https://github.com/mattupstate/flask-social-example/blob/master/app/templates/login.html-->
-
-{% block body_class %}{% endblock %}
 
 {% macro social_login(provider_id, display_name) %}
   <form action="{{ url_for('social.login', provider_id=provider_id) }}" method="POST">
@@ -15,7 +27,6 @@
   </form>
 {% endmacro %}
 
-{% block layout %}
 <div class="page-header">
   <h1>Sign Up</h1>
 </div>
@@ -27,10 +38,25 @@
       {{ form.hidden_tag() }}
       {{ render_field(form.email) }} <br>
       {{ render_field(form.password) }} <br>
-      <label class="checkbox">{{ form.remember_me()|safe }} Remember me</label>
+      {{ render_field(form.verifpwd) }} <br>
+      Please select your status:<br>
+      <input type="button" name="student" value="student" 
+             onclick="show_student()">
+      <input type="button" name="alumni" value="alumni"
+             onclick="show_alumni()">   <br>
+      <div id="prefs_student" style="display: none;">
+          {{ render_field(form.student_interests) }} <br>
+      </div>
+      <div id="prefs_alumni" style="display: none;">
+          {{ render_field(form.alumni_interests) }} <br>
+      </div>
+
       <button type="submit" class="btn btn-primary btn-large">Create Account</button>
     </form>
   </div>
+
+
+<!--
   <div class="span2 col2">
     <h3>OR</h3>
   </div>
@@ -39,5 +65,7 @@
     {{ social_login('facebook', 'Facebook' )}}
     <!-- {{ social_login('github', 'GitHub' )}} -->
   </div>
+-->
 </div>
-{% endblock %}
+</body>
+</html>

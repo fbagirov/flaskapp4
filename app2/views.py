@@ -46,7 +46,7 @@ def signup():
     # facebook_conn = current_app.social.facebook.get_connection()
     # assert facebook_conn, "no facebook_conn"
     facebook_conn = None
-    form=SignupForm()
+    form = SignupForm()
     if form.validate_on_submit():
         # WHEN USER SUBMITS SIGNUP INFO.
         print >>stderr, "/signup got", form.email
@@ -58,7 +58,7 @@ def signup():
             'signup.html',
             content='Signup Page',
             twitter_conn=twitter_conn, facebook_conn=facebook_conn,
-            form=form
+            form=form,
             )
 
 
