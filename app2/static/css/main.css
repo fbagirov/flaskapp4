@@ -84,3 +84,17 @@ h3 {
   color: #999;
   text-decoration: none;
 }
+
+/*
+Errors on form fields.
+*/
+
+ul.errors {
+  display: inline;
+  list-style-type: none ;
+}
+
+li.errors {
+  display: inline;
+  color: red;
+}

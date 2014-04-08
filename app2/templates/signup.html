@@ -5,6 +5,8 @@
 <head>
 <title>Sign Up With Con-Necta.com!</title>
 
+<link rel="stylesheet" type="text/css" href="/static/css/main.css">
+
 <script type="text/javascript">
 function show_student() {
    document.getElementById('prefs_student').style.display = "block";
@@ -27,6 +29,16 @@ function show_alumni() {
   </form>
 {% endmacro %}
 
+<!-- IDEA FROM -->
+<!-- http://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-iii-web-forms -->
+
+{% macro field_with_errors(wtform, field_name) %}
+   {{ render_field(wtform[field_name]) }}
+   {% for error in wtform.errors.get(field_name, []) %}
+       <span style="color: red;">[{{error}}]</span>
+   {% endfor %}
+{% endmacro %}
+
 <div class="page-header">
   <h1>Sign Up</h1>
 </div>
@@ -34,24 +46,34 @@ function show_alumni() {
   <div class="span4 offset1">
     <form class="well" action="{{ url_for('signup') }}"
     method="POST">
-      {{ url_for('security.login') }}
-      {{ form.hidden_tag() }}
-      {{ render_field(form.email) }} <br>
-      {{ render_field(form.password) }} <br>
-      {{ render_field(form.verifpwd) }} <br>
+      {{ wtform.hidden_tag() }}
+      {{ render_field(wtform.email) }} <br>
+      {{ render_field(wtform.password) }} <br>
+      {{ render_field(wtform.verifpwd) }} <br>
       Please select your status:<br>
-      <input type="button" name="student" value="student" 
-             onclick="show_student()">
-      <input type="button" name="alumni" value="alumni"
-             onclick="show_alumni()">   <br>
+
+      <label for="student_radio">Student</label>
+      <input type="radio" id="student_radio" name="student_or_alumni"
+             value="student" onclick="show_student()">
+
+      <label for="alumni_radio">Alumni</label>
+      <input type="radio" id="alumni_radio" name="student_or_alumni"
+             value="alumni" onclick="show_alumni()">   <br>
+    
       <div id="prefs_student" style="display: none;">
-          {{ render_field(form.student_interests) }} <br>
+          {{ render_field(wtform.student_interests) }} <br>
+          <button type="submit" class="btn btn-primary btn-large">
+              Create Account
+          </button>
       </div>
+      
       <div id="prefs_alumni" style="display: none;">
-          {{ render_field(form.alumni_interests) }} <br>
+          {{ render_field(wtform.alumni_interests) }} <br>
+          <button type="submit" class="btn btn-primary btn-large">
+              Create Account
+          </button>
       </div>
 
-      <button type="submit" class="btn btn-primary btn-large">Create Account</button>
     </form>
   </div>
 

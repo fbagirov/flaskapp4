@@ -28,6 +28,7 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), unique=True)
     password = db.Column(db.String(255))
+    
     last_login_at = db.Column(db.DateTime())
     current_login_at = db.Column(db.DateTime())
     last_login_ip = db.Column(db.String(100))
@@ -40,24 +41,50 @@ class User(db.Model, UserMixin):
     connections = db.relationship('Connection', 
                                   backref=db.backref('user', lazy='joined'),
                                   cascade="all")
+    
     first_name = db.Column(db.String(50))
     middle_initial = db.Column(db.String(1))
     last_name = db.Column(db.String(50))
     user_type = db.Column(db.Enum("student", "alumni", name="usertype"))
+
+STUDENT_INTEREST_ENUM = [
+    "Industry Connections",
+    "Networking with Leaders in your field",
+    "Potential Employers",
+    "Students from other programs",
+    "Connect with Alumni",
+    "Career Services",
+    "Career Advising",
+    "Informational Interview",
+    "Mentorship",
+    "Coaching",
+    "Resume Critique",
+    ]
 
 class StudentPreferences(db.Model):
 
     __tablename__ = "student_preferences"
 
     user_id = db.Column(db.Integer(), primary_key=True)
+
+    other = db.Column(db.Boolean())
+    other_string = db.Column(db.String(140))
+
     industry_connections = db.Column(db.Boolean())
     leaders_in_your_field = db.Column(db.Boolean())
     potential_employers = db.Column(db.Boolean())
     students_fm_other_programs = db.Column(db.Boolean())
     alumni = db.Column(db.Boolean())
     career_services = db.Column(db.Boolean())
-    other = db.Column(db.Boolean())
-    other_string = db.Column(db.String(140))
+    
+
+def add_prefs_to_class(cls, prefs):
+    for pref_label in prefs:
+        pref_attr = pref_label.lower().replace(' ', '_')
+        setattr(cls, pref_attr, db.Column(db.Boolean()))
+                
+# add_prefs_to_class(StudentPreferences, STUDENT_INTEREST_ENUM)
+
 
 class AlumniPreferences(db.Model):
 

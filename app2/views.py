@@ -47,30 +47,51 @@ def signup():
     # facebook_conn = current_app.social.facebook.get_connection()
     # assert facebook_conn, "no facebook_conn"
     facebook_conn = None
-    form = SignupForm()
-    if form.validate_on_submit():
+    
+    wtform = SignupForm()
+    html_form = request.form
+    wtform_valid = wtform.validate_on_submit()
+    # The student vs. alumni radio buttons are not done with WTForms, validate:
+    s_or_a = html_form.get("student_or_alumni", None)
+    html_form_valid = s_or_a != None  # User didn't choose either.
+
+    # DEAL WITH "STUDENT" or "ALUMNI" ALREADY CHECKED BUT REDISPLAYING.
+    
+    if wtform_valid and html_form_valid:
         # WHEN USER SUBMITS SIGNUP INFO.
-        email = str(form.email.data)
-        password = str(form.password.data)
-        print >>stderr, "form.email.data =", repr(form.email.data)
-        print >>stderr, "form.password.data =", repr(form.password.data)
-        user_datastore.create_user(email=email,
+        email = str(wtform.email.data)
+        password = str(wtform.password.data)
+        print >>stderr, "html_form.keys() =", str(html_form.keys())
+        print >>stderr, 'html_form["student_or_alumni"] =', repr(s_or_a)
+        stderr.flush()
+
+        user = user_datastore.create_user(email=email,
                                    password=password)
+        user.user_type = s_or_a
+        if s_or_a == "student":
+            s_interests = wtform.student_interests.data
+            print >>stderr, "s_interests =", repr(s_interests)
+            pass
+
+        print >>stderr, "user =", str(user)
+        print >>stderr, "user.user_type =", repr(user.user_type)
         db.session.commit()
         print >>stderr, "Created user"
         return redirect("/index")
     else:
         # NEW BLANK SIGNUP PAGE.
-        ks = form.errors.keys()
+        ks = wtform.errors.keys()
+        email_field = wtform.email
+        email_errors = wtform.errors.get("email", [])
         if ks:
-            print >>stderr, "Errors in the signup form:"
+            print >>stderr, "Errors in the signup wtform:"
             for key in ks:
-                print >>stderr, "   ", key
+                print >>stderr, "   ", key+":", wtform.errors[key]
         return render_template(
             'signup.html',
             content='Signup Page',
             twitter_conn=twitter_conn, facebook_conn=facebook_conn,
-            form=form,
+            wtform=wtform,
             )
 
 
@@ -85,13 +106,13 @@ def soc_login():
 	content='Login Page',
         twitter_conn=twitter_conn, facebook_conn=facebook_conn)
 
-#    form = LoginForm()
-#    if form.validate_on_submit():
-#        flash('Login requested for OpenID="' + form.openid.data + '", remember_me=' + str(form.remember_me.data))
+#    wtform = LoginForm()
+#    if wtform.validate_on_submit():
+#        flash('Login requested for OpenID="' + wtform.openid.data + '", remember_me=' + str(wtform.remember_me.data))
 #        return redirect('/index')
 #    return render_template('login.html', 
 #        title = 'Sign In',
-#        form = form,
+#        wtform = wtform,
 #        providers = app.config['OPENID_PROVIDERS'])
 
 
