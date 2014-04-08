@@ -7,8 +7,9 @@ from flask import Flask, render_template
 from flask.ext.social import Social
 from flask.ext.social.datastore import SQLAlchemyConnectionDatastore
 
-from . import app 
-
+from . import app, db
+from app2 import user_datastore
+from models import User, StudentPreferences, AlumniPreferences
 from forms import *
 
 @app.route('/')
@@ -49,11 +50,22 @@ def signup():
     form = SignupForm()
     if form.validate_on_submit():
         # WHEN USER SUBMITS SIGNUP INFO.
-        print >>stderr, "/signup got", form.email
-        print >>stderr, "/signup got", form.password
+        email = str(form.email.data)
+        password = str(form.password.data)
+        print >>stderr, "form.email.data =", repr(form.email.data)
+        print >>stderr, "form.password.data =", repr(form.password.data)
+        user_datastore.create_user(email=email,
+                                   password=password)
+        db.session.commit()
+        print >>stderr, "Created user"
         return redirect("/index")
     else:
         # NEW BLANK SIGNUP PAGE.
+        ks = form.errors.keys()
+        if ks:
+            print >>stderr, "Errors in the signup form:"
+            for key in ks:
+                print >>stderr, "   ", key
         return render_template(
             'signup.html',
             content='Signup Page',

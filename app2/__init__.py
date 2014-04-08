@@ -18,16 +18,20 @@ app.config.from_object('config')
 # or else SQLAlchemy will create a default in-memory-only db.
 db = SQLAlchemy(app)
 
-from . import models, views 
+from . import models
+
+user_datastore = SQLAlchemyUserDatastore(db, models.User, models.Role)
+conn_datastore = SQLAlchemyConnectionDatastore(db, models.Connection)
+
 
 # views contains an @route('/login), and must be imported before 
 #     app.security = Security(app, user_datastore)
 # or else Security will supply its own /login route.
-user_datastore = SQLAlchemyUserDatastore(db, models.User, models.Role)
 app.security = Security(app, user_datastore)
 
-conn_datastore = SQLAlchemyConnectionDatastore(db, models.Connection)
 app.social = Social(app, conn_datastore)
 
 # app.config['SECURITY_POST_LOGIN'] = '/profile'
+
+from . import views
 
