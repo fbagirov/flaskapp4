@@ -39,15 +39,29 @@ class LoginForm(Form):
     remember_me = BooleanField('remember_me', default = False)
 
 
+def prefs_choices(prefs):
+    choices = []
+    for pref_label in prefs + ["Other"]:
+        pref_attr = pref_label.lower().replace(' ', '_')
+        choices.append( (pref_attr, pref_label) )
+    return choices
+
+                
 class PrefsStudent(Form):
     student_interests = SelectMultipleField('What are your interests?', 
+        choices=prefs_choices(models.STUDENT_INTEREST_ENUM),
+        option_widget=widgets.CheckboxInput(),
+        widget=widgets.ListWidget(prefix_label=False),
+        )
+
+    
+"""
         choices=[
             ("pizza", "Pizza"),
             ("beer", "Beer"),
             ],
-        option_widget=widgets.CheckboxInput(),
-        widget=widgets.ListWidget(prefix_label=False),
-        )
+"""
+    
 
 class PrefsAlumni(Form):
     alumni_interests = SelectMultipleField('What are your interests?', 

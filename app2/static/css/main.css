@@ -98,3 +98,11 @@ li.errors {
   display: inline;
   color: red;
 }
+
+/*
+Interests checkbox lists in user preferences.
+*/
+
+div.interests ul {
+  list-style-type: none;
+}

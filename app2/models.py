@@ -66,10 +66,12 @@ class StudentPreferences(db.Model):
     __tablename__ = "student_preferences"
 
     user_id = db.Column(db.Integer(), primary_key=True)
-
+    # User interest booleans are added by add_prefs_to_class, below.
     other = db.Column(db.Boolean())
     other_string = db.Column(db.String(140))
 
+    
+if False:
     industry_connections = db.Column(db.Boolean())
     leaders_in_your_field = db.Column(db.Boolean())
     potential_employers = db.Column(db.Boolean())
@@ -83,7 +85,7 @@ def add_prefs_to_class(cls, prefs):
         pref_attr = pref_label.lower().replace(' ', '_')
         setattr(cls, pref_attr, db.Column(db.Boolean()))
                 
-# add_prefs_to_class(StudentPreferences, STUDENT_INTEREST_ENUM)
+add_prefs_to_class(StudentPreferences, STUDENT_INTEREST_ENUM)
 
 
 class AlumniPreferences(db.Model):

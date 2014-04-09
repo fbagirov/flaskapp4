@@ -60,14 +60,14 @@ function show_alumni() {
       <input type="radio" id="alumni_radio" name="student_or_alumni"
              value="alumni" onclick="show_alumni()">   <br>
     
-      <div id="prefs_student" style="display: none;">
+      <div class="interests" id="prefs_student" style="display: none;">
           {{ render_field(wtform.student_interests) }} <br>
           <button type="submit" class="btn btn-primary btn-large">
               Create Account
           </button>
       </div>
       
-      <div id="prefs_alumni" style="display: none;">
+      <div class="interests" id="prefs_alumni" style="display: none;">
           {{ render_field(wtform.alumni_interests) }} <br>
           <button type="submit" class="btn btn-primary btn-large">
               Create Account

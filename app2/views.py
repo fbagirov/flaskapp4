@@ -71,7 +71,18 @@ def signup():
         if s_or_a == "student":
             s_interests = wtform.student_interests.data
             print >>stderr, "s_interests =", repr(s_interests)
-            pass
+            
+            student_prefs = StudentPreferences(user_id=user.id)
+            db.session.add(student_prefs)
+            
+            for interest in s_interests:
+                assert getattr(StudentPreferences, interest)
+                setattr(student_prefs, interest, True)
+
+            print "student_prefs =", str(student_prefs)
+            for interest in s_interests:
+                print >>stderr, "student_prefs." + interest, "=", 
+                print >>stderr, getattr(student_prefs, interest)
 
         print >>stderr, "user =", str(user)
         print >>stderr, "user.user_type =", repr(user.user_type)
