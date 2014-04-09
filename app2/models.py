@@ -2,6 +2,7 @@ from sys import stderr
 from flask import Flask
 from flask.ext.security import Security
 from flask.ext.security import UserMixin, RoleMixin, login_required
+from sqlalchemy.orm import relationship, backref
 
 from . import db
 
@@ -28,6 +29,13 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), unique=True)
     password = db.Column(db.String(255))
+
+    student_prefs_id = db.Column(db.Integer, db.ForeignKey('student_preferences.id'))
+    student_prefs = relationship("StudentPreferences", 
+                                 primaryjoin="User.student_prefs_id == StudentPreferences.id")
+    alumni_prefs_id = db.Column(db.Integer, db.ForeignKey('alumni_preferences.id'))
+    alumni_prefs = relationship("AlumniPreferences", 
+                                 primaryjoin="User.alumni_prefs_id == AlumniPreferences.id")
     
     last_login_at = db.Column(db.DateTime())
     current_login_at = db.Column(db.DateTime())
@@ -47,6 +55,13 @@ class User(db.Model, UserMixin):
     last_name = db.Column(db.String(50))
     user_type = db.Column(db.Enum("student", "alumni", name="usertype"))
 
+    
+def add_prefs_to_class(cls, prefs):
+    for pref_label in prefs:
+        pref_attr = pref_label.lower().replace(' ', '_')
+        setattr(cls, pref_attr, db.Column(db.Boolean()))
+                
+
 STUDENT_INTEREST_ENUM = [
     "Industry Connections",
     "Networking with Leaders in your field",
@@ -65,46 +80,36 @@ class StudentPreferences(db.Model):
 
     __tablename__ = "student_preferences"
 
-    user_id = db.Column(db.Integer(), primary_key=True)
+    id = db.Column(db.Integer(), primary_key=True)
     # User interest booleans are added by add_prefs_to_class, below.
     other = db.Column(db.Boolean())
-    other_string = db.Column(db.String(140))
+    other_string = db.Column(db.String(140))    
 
-    
-if False:
-    industry_connections = db.Column(db.Boolean())
-    leaders_in_your_field = db.Column(db.Boolean())
-    potential_employers = db.Column(db.Boolean())
-    students_fm_other_programs = db.Column(db.Boolean())
-    alumni = db.Column(db.Boolean())
-    career_services = db.Column(db.Boolean())
-    
-
-def add_prefs_to_class(cls, prefs):
-    for pref_label in prefs:
-        pref_attr = pref_label.lower().replace(' ', '_')
-        setattr(cls, pref_attr, db.Column(db.Boolean()))
-                
 add_prefs_to_class(StudentPreferences, STUDENT_INTEREST_ENUM)
 
 
-class AlumniPreferences(db.Model):
+ALUMNI_INTEREST_ENUM = [
+    "Industry Connections",
+    "Networking with Leaders in Your Field",
+    "Connecting with students",
+    "Connecting with Other Alumni Members",
+    "Finding Talent",
+    "Networking",
+    "Career Advising",
+    "Mentor Students",
+    "Coach Students",
+    "Resume Critique",
+    ]
 
+class AlumniPreferences(db.Model):
     __tablename__ = "alumni_preferences"
 
-    user_id = db.Column(db.Integer(), primary_key=True)
-    connections_w_students = db.Column(db.Boolean())
-    connecting_w_alumni = db.Column(db.Boolean())
-    connecting_w_career_services = db.Column(db.Boolean())
-    networking = db.Column(db.Boolean())
-    career_advising = db.Column(db.Boolean())
-    mentorship = db.Column(db.Boolean())
-    coaching = db.Column(db.Boolean())
-    informational_interview = db.Column(db.Boolean())
-    resume_critique = db.Column(db.Boolean())
-    finding_talent = db.Column(db.Boolean())
+    id = db.Column(db.Integer(), primary_key=True)
     other = db.Column(db.Boolean())
     other_string = db.Column(db.String(140))
+
+add_prefs_to_class(AlumniPreferences, ALUMNI_INTEREST_ENUM)
+
 
 # copied from https://pythonhosted.org/Flask-Social/
 

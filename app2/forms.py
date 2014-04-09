@@ -54,21 +54,10 @@ class PrefsStudent(Form):
         widget=widgets.ListWidget(prefix_label=False),
         )
 
-    
-"""
-        choices=[
-            ("pizza", "Pizza"),
-            ("beer", "Beer"),
-            ],
-"""
-    
 
 class PrefsAlumni(Form):
     alumni_interests = SelectMultipleField('What are your interests?', 
-        choices=[
-            ("mentoring", "Mentoring"),
-            ("hiring", "Hiring"),
-            ],
+        choices=prefs_choices(models.ALUMNI_INTEREST_ENUM),
         option_widget=widgets.CheckboxInput(),
         widget=widgets.ListWidget(prefix_label=False),
         )

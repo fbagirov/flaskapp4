@@ -69,20 +69,21 @@ def signup():
                                    password=password)
         user.user_type = s_or_a
         if s_or_a == "student":
-            s_interests = wtform.student_interests.data
-            print >>stderr, "s_interests =", repr(s_interests)
+            interests = wtform.student_interests.data
+            prefs = user.student_prefs = models.StudentPreferences()
+        else:
+            interests = wtform.alumni_interests.data
+            prefs = user.alumni_prefs = models.AlumniPreferences()
             
-            student_prefs = StudentPreferences(user_id=user.id)
-            db.session.add(student_prefs)
-            
-            for interest in s_interests:
-                assert getattr(StudentPreferences, interest)
-                setattr(student_prefs, interest, True)
+        db.session.add(prefs)
 
-            print "student_prefs =", str(student_prefs)
-            for interest in s_interests:
-                print >>stderr, "student_prefs." + interest, "=", 
-                print >>stderr, getattr(student_prefs, interest)
+        for interest in interests:
+            setattr(prefs, interest, True)
+
+        print "prefs =", str(prefs)
+        for interest in interests:
+            print >>stderr, "prefs." + interest, "=", 
+            print >>stderr, getattr(prefs, interest)
 
         print >>stderr, "user =", str(user)
         print >>stderr, "user.user_type =", repr(user.user_type)
@@ -90,7 +91,7 @@ def signup():
         print >>stderr, "Created user"
         return redirect("/index")
     else:
-        # NEW BLANK SIGNUP PAGE.
+        # NEW BLANK SIGNUP PAGE or SIGNUP PAGE WITH MARKED ERRORS.
         ks = wtform.errors.keys()
         email_field = wtform.email
         email_errors = wtform.errors.get("email", [])
