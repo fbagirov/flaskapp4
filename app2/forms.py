@@ -1,8 +1,9 @@
 from flask.ext.wtf import Form
 from wtforms import TextField, BooleanField, SelectField, RadioField, \
-                    IntegerField, SelectMultipleField, widgets, ValidationError
+                    IntegerField, SelectMultipleField, PasswordField, \
+                    widgets, ValidationError
 
-from wtforms.validators import Required
+from wtforms.validators import Required, Email, EqualTo
 import models
 
 
@@ -34,8 +35,8 @@ class Unique(object):
 
 class LoginForm(Form):
     # openid = TextField('openid', validators = [Required()])
-    email = TextField("email", validators = [Required()])
-    password = TextField("password", validators = [Required()])
+    email = TextField("email", validators = [Required(), Email()])
+    password = PasswordField("password", validators = [Required()])
     remember_me = BooleanField('remember_me', default = False)
 
 
@@ -68,18 +69,24 @@ class SignupForm(PrefsStudent, PrefsAlumni):
     email = TextField("email", 
                       validators = [
                           Required(), 
+                          Email(),
                           Unique(models.User, models.User.email, 
                                  "Email already exists!"),
-                          ]
+                          ],
         )
-    password = TextField("password", validators = [Required()])
-    verifpwd  = TextField("verify_password", validators = [Required()])
-    #    This is handled "manually" in signup.html and views.py signup().
-    #    student_or_alumni = RadioField('Which are you?', choices=[
-    #        ("student", "Student"),
-    #        ("alumni", "Alumni"),
-	#    ])
+    password = PasswordField("password", 
+                             validators = [
+                                 Required(), 
+                                 EqualTo("verifpwd", "Passwords must match.")
+                                 ],
+        )
+    verifpwd  = PasswordField("verify_password", validators = [Required()])
+    #    student_or_alumni is handled "manually" in signup.html and 
+    #    views.py signup():
+    #    Which are you?
+    #      O Student  O Alumni    ==> "student" or "alumni"   
 
+    
 class PreferencesEditForm(SignupForm):
     """ 
     Form to use if you are editing preferences/interests. 

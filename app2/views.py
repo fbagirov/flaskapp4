@@ -52,58 +52,35 @@ def signup():
     html_form = request.form
     wtform_valid = wtform.validate_on_submit()
     # The student vs. alumni radio buttons are not done with WTForms, validate:
-    s_or_a = html_form.get("student_or_alumni", None)
-    html_form_valid = s_or_a != None  # User didn't choose either.
-
-    # DEAL WITH "STUDENT" or "ALUMNI" ALREADY CHECKED BUT REDISPLAYING.
-    
+    html_form_valid = ("student_or_alumni" in html_form)
     if wtform_valid and html_form_valid:
         # WHEN USER SUBMITS SIGNUP INFO.
-        email = str(wtform.email.data)
-        password = str(wtform.password.data)
-        print >>stderr, "html_form.keys() =", str(html_form.keys())
-        print >>stderr, 'html_form["student_or_alumni"] =', repr(s_or_a)
-        stderr.flush()
-
-        user = user_datastore.create_user(email=email,
-                                   password=password)
-        user.user_type = s_or_a
-        if s_or_a == "student":
+        user = user_datastore.create_user(email=str(wtform.email.data),
+                                          password=str(wtform.password.data))
+        user.user_type = html_form["student_or_alumni"]
+        if user.user_type == "student":
             interests = wtform.student_interests.data
             prefs = user.student_prefs = models.StudentPreferences()
         else:
             interests = wtform.alumni_interests.data
             prefs = user.alumni_prefs = models.AlumniPreferences()
             
-        db.session.add(prefs)
-
         for interest in interests:
             setattr(prefs, interest, True)
-
-        print "prefs =", str(prefs)
-        for interest in interests:
-            print >>stderr, "prefs." + interest, "=", 
-            print >>stderr, getattr(prefs, interest)
-
-        print >>stderr, "user =", str(user)
-        print >>stderr, "user.user_type =", repr(user.user_type)
+            
+        db.session.add(prefs)
         db.session.commit()
-        print >>stderr, "Created user"
         return redirect("/index")
     else:
         # NEW BLANK SIGNUP PAGE or SIGNUP PAGE WITH MARKED ERRORS.
-        ks = wtform.errors.keys()
-        email_field = wtform.email
-        email_errors = wtform.errors.get("email", [])
-        if ks:
-            print >>stderr, "Errors in the signup wtform:"
-            for key in ks:
-                print >>stderr, "   ", key+":", wtform.errors[key]
+        s_or_a = html_form.get("student_or_alumni", None)
         return render_template(
             'signup.html',
             content='Signup Page',
             twitter_conn=twitter_conn, facebook_conn=facebook_conn,
             wtform=wtform,
+            student_checked=("checked" if s_or_a == "student" else ""),
+            alumni_checked=("checked" if s_or_a == "alumni" else ""),
             )
 
 

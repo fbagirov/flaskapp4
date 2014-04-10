@@ -30,6 +30,11 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(255), unique=True)
     password = db.Column(db.String(255))
 
+    # Clue from here:
+    # http://docs.sqlalchemy.org/en/latest/orm/relationships.html#one-to-one
+    # as ammended here:
+    # http://journal.shiroyuki.com/2012/08/unidirectional-one-to-one-relationship.html
+
     student_prefs_id = db.Column(db.Integer, db.ForeignKey('student_preferences.id'))
     student_prefs = relationship("StudentPreferences", 
                                  primaryjoin="User.student_prefs_id == StudentPreferences.id")
