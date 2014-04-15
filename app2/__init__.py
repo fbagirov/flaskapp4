@@ -2,6 +2,8 @@ from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.security import Security, SQLAlchemyUserDatastore
 from flask.ext.social import Social, SQLAlchemyConnectionDatastore
+from flask.ext.openid import OpenID
+from flask.ext.login import LoginManager
 
 import sys
 
@@ -11,6 +13,13 @@ if not "config" in sys.modules:
 
 app = Flask('app2')
 app.config.from_object('config')
+
+# from
+# http://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-v-user-logins
+lm = LoginManager()
+lm.init_app(app)
+# oid = OpenID(app, os.path.join(config.basedir, 'tmp')
+
 # The 'config' module contains the database configuration, so 
 #     app.config.from_object('config')
 # must happen before

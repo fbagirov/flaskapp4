@@ -64,6 +64,21 @@ class User(db.Model, UserMixin):
     last_name = db.Column(db.String(50))
     user_type = db.Column(db.Enum("student", "alumni", name="usertype"))
 
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return unicode(self.id)
+
+    def __repr__(self):
+        return '<User %r>' % (self.nickname)
+
     
 def add_prefs_to_class(cls, prefs):
     for pref_label in prefs:
