@@ -18,7 +18,7 @@ class Unique(object):
     """
     def __init__(self, model, model_field, message=None):
         self.model = model
-        self.field = model_field
+        self.model_field = model_field
         if not message:
             message = u'this element already exists'
         self.message = message

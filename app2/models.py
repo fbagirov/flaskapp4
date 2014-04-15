@@ -60,6 +60,15 @@ class User(db.Model, UserMixin):
     last_name = db.Column(db.String(50))
     user_type = db.Column(db.Enum("student", "alumni", name="usertype"))
 
+#added from Flask Mega Tutorial
+#   def is_authenticated(self_):
+#	return True
+
+#   def is_active(self):
+#	return True
+
+#   def is_anonymous(self):
+#	return True
     
 def add_prefs_to_class(cls, prefs):
     for pref_label in prefs:
@@ -132,7 +141,6 @@ class Connection(db.Model):
     profile_url = db.Column(db.String(512))
     image_url = db.Column(db.String(512))
     rank = db.Column(db.Integer)
-
 
 
 
