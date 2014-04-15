@@ -47,7 +47,8 @@ def signup():
     # facebook_conn = current_app.social.facebook.get_connection()
     # assert facebook_conn, "no facebook_conn"
     facebook_conn = None
-    
+   
+#taken from Flask Mega Tutorial and Flask Social example 
     wtform = SignupForm()
     html_form = request.form
     wtform_valid = wtform.validate_on_submit()

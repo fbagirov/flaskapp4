@@ -9,29 +9,36 @@ import models
 
 class Unique(object):
     """ 
-    Validator that checks field uniqueness.  
+    Validator that checks that user input doesn't match an existing record.
     Also deals with editing unique field on an existing record.
     See: 
         http://stackoverflow.com/questions/5685831/
         PreferencesEditForm, below.
         preferences_update(), below.
     """
-    def __init__(self, model, field, message=None):
+    def __init__(self, model, model_field, message=None):
         self.model = model
-        self.field = field
+        self.field = model_field
         if not message:
             message = u'this element already exists'
         self.message = message
 
+
     def __call__(self, form, field):         
-        check = self.model.query.filter(self.field == field.data).first()
+        '''
+        Try to fetch one record from form's table
+            where the value of the db field matches user input.
+        If new record, that's a duplicate, not okay.
+        If existing record, it's okay iff it's the record we're editing.
+        '''
+        check = self.model.query.filter(self.model_field == field.data).first()
         if 'id' in form:
+            # If the form has an id it's the id of the record we're editing.
             id = form.id.data
         else:
             id = None
         if check and (id is None or id != check.id):
             raise ValidationError(self.message)
-
 
 class LoginForm(Form):
     # openid = TextField('openid', validators = [Required()])
