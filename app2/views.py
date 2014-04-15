@@ -71,7 +71,7 @@ def signup():
             
         db.session.add(prefs)
         db.session.commit()
-        return redirect("/index")
+        return redirect("/profile")
     else:
         # NEW BLANK SIGNUP PAGE or SIGNUP PAGE WITH MARKED ERRORS.
         s_or_a = html_form.get("student_or_alumni", None)
@@ -123,4 +123,12 @@ def soc_login():
 #def login():
 #    return render_template('s_pref_submit')
 
+@app.route('/logout')
+def logout():
+    logout_user()
+    flash('You were logged out')
+    return redirect(url_for('profile'))
 
+@app.route('/profile')
+def profile():
+    return render_template('profile.html')
