@@ -22,6 +22,10 @@ class Role(db.Model, RoleMixin):
     name = db.Column(db.String(80), unique=True)
     description = db.Column(db.String(255))
 
+
+# ADD: unique constraint on student_prefs_id and alumni_prefs_id ... IF NOT NULL?
+    
+
 class User(db.Model, UserMixin):
 
     __tablename__ = "users"
