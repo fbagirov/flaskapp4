@@ -4,7 +4,7 @@ from flask.ext.security import Security
 from flask.ext.security import UserMixin, RoleMixin, login_required
 from sqlalchemy.orm import relationship, backref
 
-from . import db
+from . import db, lm
 
 # Copied from https://pythonhosted.org/Flask-Security/quickstart.html
 
@@ -80,6 +80,13 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return '<User %r>' % (self.nickname)
+
+
+@lm.user_loader
+def load_user(id):
+    u = User.query.get(int(id))
+    print >>stderr, "User.query.get(int(%r)) got %r" % (id, u)
+    return u
 
     
 def add_prefs_to_class(cls, prefs):

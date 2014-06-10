@@ -8,3 +8,4 @@ app.db*
 .git_old
 app2/tmp
 *.swp
+.flask

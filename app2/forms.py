@@ -9,8 +9,10 @@ import models
 
 class Unique(object):
     """ 
-    Validator that checks that user input doesn't match an existing record.
-    Also deals with editing unique field on an existing record.
+    Validator that checks that user input doesn't match an existing record
+    when entering a new record, or doesn't match a different existing record
+    when editing an existing record.
+    This can be added to the validators=[] list of a Form field.
     See: 
         http://stackoverflow.com/questions/5685831/
         PreferencesEditForm, below.
@@ -24,21 +26,25 @@ class Unique(object):
         self.message = message
 
 
-    def __call__(self, form, field):         
+    def __call__(self, form, entered):         
         '''
-        Try to fetch one record from form's table
-            where the value of the db field matches user input.
-        If new record, that's a duplicate, not okay.
-        If existing record, it's okay iff it's the record we're editing.
+        Check field value entered for uniqueness in the model's table.
+        This is called, e.g, within form.validate_on_submit().
         '''
-        check = self.model.query.filter(self.model_field == field.data).first()
+        # Is there a record in the model's table
+        #     where the value of the db field matches user input?
+        existing = self.model.query.filter(self.model_field == entered.data).first()
+        if existing == None:
+            # If none exists then the user's input is unique.            
+            return
+        
         if 'id' in form:
             # If the form has an id it's the id of the record we're editing.
-            id = form.id.data
-        else:
-            id = None
-        if check and (id is None or id != check.id):
-            raise ValidationError(self.message)
+            if form.id.data == existing.id:
+                # If the existing record is the one we're editing, it's still unique.
+                return
+
+        raise ValidationError(self.message)
 
 class LoginForm(Form):
     # openid = TextField('openid', validators = [Required()])
@@ -102,9 +108,6 @@ class PreferencesEditForm(SignupForm):
         http://stackoverflow.com/questions/5685831
         preferences_update(), below.
     """
-    # This field lets the Unique() validator check whether any unique
-    # field is the same as an existing record because it's the same
-    # record you're updating!
     id = IntegerField(widget=widgets.HiddenInput())
     
 def preferences_update(user_id):
