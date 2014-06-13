@@ -1,9 +1,10 @@
 {% extends "layout.html" %}
+
 {% from '_macros.html' import render_field %}
 
 <!--removed boilerplate.html from this code https://github.com/mattupstate/flask-social-example/blob/master/app/templates/login.html-->
 
-{% block body_class %}{% endblock %}
+{% block body_class %}main main-login{% endblock %}
 
 {% macro social_login(provider_id, display_name) %}
   <form action="{{ url_for('social.login', provider_id=provider_id) }}" method="POST">
@@ -11,7 +12,7 @@
   </form>
 {% endmacro %}
 
-{% block layout %}
+{% block content %}
 <div class="page-header">
   <h1>Log In</h1>
 </div>
