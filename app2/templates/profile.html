@@ -1,6 +1,25 @@
 {% extends "layout.html" %}
 {% block content %}
 <h1>Profile and settings page</h1>
+<div class="row content">
+  <div class="span4 offset1">
+    <form class="well" actions="#" method="POST">
+	{{ wtform.hidden_tag() }}
+	{{ render_field(wtform.email) }}<br>
+	{{ render_field(wtform.password) }} <br>
+	{{ render_field(wtform.newpwd) }} <br>
+	{{ render_field(wtform.verifpwd) }} <br>	
+        Status:
+
+      <label for="student_radio">Student</label>
+      <input type="radio" id="student_radio" name="student_or_alumni"
+             value="student" onclick="show_prefs()" {{ student_checked }}>
+
+      <label for="alumni_radio">Alumni</label>
+      <input type="radio" id="alumni_radio" name="student_or_alumni"
+             value="alumni" onclick="show_prefs()" {{ alumni_checked }}> <br>
+
+
 <p><a href="{{ url_for('logout') }}">Logout</a>
 
 {% endblock %}
